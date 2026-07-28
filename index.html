@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Os Ritmos de Valfenda - Semanal</title>
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700&family=Cinzel:wght@500;700&family=Quicksand:wght@400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+
+  <style>
+    :root {
+      --bg-pergaminho: #0d0a07;
+      --card-bg: rgba(23, 16, 11, 0.92);
+      --borda-dourada: #c5a059;
+      --borda-glow: rgba(197, 160, 89, 0.35);
+      --texto-primario: #e8d8c8;
+      --texto-dourado: #f0c987;
+      --verde-elfico: #81b29a;
+      --rosa-danca: #e07a5f;
+      --lua-azul: #a8dadc;
+      --fonte-titulo: 'Cinzel Decorative', serif;
+      --fonte-sub: 'Cinzel', serif;
+      --fonte-corpo: 'Quicksand', sans-serif;
+    }
+
+    body {
+      background-color: var(--bg-pergaminho);
+      color: var(--texto-primario);
+      font-family: var(--fonte-corpo);
+      margin: 0;
+      padding: 12px;
+      display: flex;
+      justify-content: center;
+    }
+
+    .card {
+      width: 100%;
+      max-width: 720px;
+      background: var(--card-bg);
+      border: 2px solid var(--borda-dourada);
+      border-radius: 12px;
+      padding: 18px;
+      box-shadow: 0 0 15px var(--borda-glow);
+      backdrop-filter: blur(8px);
+    }
+
+    h2 {
+      font-family: var(--fonte-titulo);
+      color: var(--texto-dourado);
+      font-size: 1.15rem;
+      text-align: center;
+      margin-top: 0;
+      border-bottom: 1px solid var(--borda-dourada);
+      padding-bottom: 8px;
+    }
+
+    .topo-ritmo {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      justify-content: space-between;
+      align-items: center;
+      background: rgba(0,0,0,0.4);
+      border: 1px solid rgba(197, 160, 89, 0.3);
+      padding: 10px 14px;
+      border-radius: 8px;
+      margin-bottom: 16px;
+    }
+
+    .lua-box {
+      font-family: var(--fonte-sub);
+      color: var(--lua-azul);
+      font-size: 0.82rem;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .carga-areas {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 8px;
+      margin-bottom: 16px;
+    }
+
+    @media (max-width: 500px) {
+      .carga-areas { grid-template-columns: repeat(2, 1fr); }
+    }
+
+    .area-card {
+      background: rgba(0,0,0,0.3);
+      border: 1px solid rgba(197, 160, 89, 0.2);
+      border-radius: 6px;
+      padding: 8px;
+      text-align: center;
+    }
+
+    .area-nome {
+      font-family: var(--fonte-sub);
+      font-size: 0.72rem;
+      color: var(--texto-dourado);
+      margin-bottom: 4px;
+    }
+
+    select {
+      background: rgba(0,0,0,0.6);
+      border: 1px solid var(--borda-dourada);
+      color: var(--texto-primario);
+      border-radius: 4px;
+      padding: 4px;
+      font-size: 0.72rem;
+      width: 100%;
+    }
+
+    .grid-semana {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 6px;
+    }
+
+    @media (max-width: 650px) {
+      .grid-semana { grid-template-columns: 1fr; }
+    }
+
+    .col-dia-sem {
+      background: rgba(0,0,0,0.4);
+      border: 1px solid rgba(197, 160, 89, 0.25);
+      border-radius: 6px;
+      padding: 8px;
+      font-size: 0.78rem;
+    }
+
+    .col-dia-sem.hoje {
+      border: 1px solid var(--texto-dourado);
+      background: rgba(197, 160, 89, 0.12);
+    }
+
+    .dia-sem-header {
+      font-family: var(--fonte-sub);
+      font-weight: bold;
+      color: var(--texto-dourado);
+      border-bottom: 1px solid rgba(197, 160, 89, 0.2);
+      padding-bottom: 4px;
+      margin-bottom: 6px;
+      text-align: center;
+      font-size: 0.75rem;
+    }
+
+    .tag-fixa {
+      background: rgba(224, 122, 95, 0.2);
+      border: 1px solid var(--rosa-danca);
+      color: var(--rosa-danca);
+      padding: 2px 4px;
+      border-radius: 3px;
+      font-size: 0.68rem;
+      margin-bottom: 4px;
+      text-align: center;
+      font-weight: bold;
+    }
+
+    textarea {
+      width: 100%;
+      background: rgba(0,0,0,0.5);
+      border: 1px solid rgba(197, 160, 89, 0.3);
+      color: var(--texto-primario);
+      border-radius: 4px;
+      padding: 4px;
+      font-family: var(--fonte-corpo);
+      font-size: 0.72rem;
+      box-sizing: border-box;
+      resize: none;
+    }
+
+    .btn-salvar {
+      width: 100%;
+      background: linear-gradient(135deg, #c5a059, #81b29a);
+      border: none;
+      color: #0d0a07;
+      font-family: var(--fonte-sub);
+      font-weight: bold;
+      padding: 10px;
+      border-radius: 6px;
+      cursor: pointer;
+      margin-top: 14px;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="card">
+    <h2>🔮 Os Ritmos de Valfenda — Semanal</h2>
+
+    <!-- TOPO: LUNAR & NÚMERO DA SEMANA -->
+    <div class="topo-ritmo">
+      <div class="lua-box">
+        <i class="fa-solid fa-moon"></i> <span id="lua-fase">Carregando fase da Lua...</span>
+      </div>
+      <div style="font-family: var(--fonte-sub); font-size:0.78rem; color: var(--texto-dourado);" id="semana-identificador">
+        Semana Ativa
+      </div>
+    </div>
+
+    <!-- BALANCEADOR DE CARGA POR ÁREA -->
+    <div class="carga-areas">
+      <div class="area-card">
+        <div class="area-nome">🏠 Casa / Pets</div>
+        <select id="carga-casa" onchange="salvarCarga()">
+          <option value="Leve 🟢">Leve 🟢</option>
+          <option value="Média 🟡">Média 🟡</option>
+          <option value="Intensa 🔴">Intensa 🔴</option>
+        </select>
+      </div>
+      <div class="area-card">
+        <div class="area-nome">🏪 Loja Auto</div>
+        <select id="carga-loja" onchange="salvarCarga()">
+          <option value="Leve 🟢">Leve 🟢</option>
+          <option value="Média 🟡" selected>Média 🟡</option>
+          <option value="Intensa 🔴">Intensa 🔴</option>
+        </select>
+      </div>
+      <div class="area-card">
+        <div class="area-nome">🎨 Design Studio</div>
+        <select id="carga-design" onchange="salvarCarga()">
+          <option value="Pausa ⏸️">Pausa ⏸️</option>
+          <option value="Foco 🎯">Foco 🎯</option>
+          <option value="Manutenção 🛠️" selected>Manutenção 🛠️</option>
+        </select>
+      </div>
+      <div class="area-card">
+        <div class="area-nome">🧠 Estudos / Saúde</div>
+        <select id="carga-estudos" onchange="salvarCarga()">
+          <option value="Leve 🟢">Leve 🟢</option>
+          <option value="Avanço 🚀" selected>Avanço 🚀</option>
+          <option value="Provas 📚">Provas 📚</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- GRID DA SEMANA (SEG A DOM) -->
+    <div class="grid-semana" id="container-semana">
+      <!-- Gerado dinamicamente via JS -->
+    </div>
+
+    <button class="btn-salvar" onclick="salvarSemana()">🌿 Sincronizar Ritmo Semanal</button>
+  </div>
+
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyD19AiSaJosyhNL8iz4J-D1mHgbu-MOKm4",
+      authDomain: "planejamentos-83b23.firebaseapp.com",
+      projectId: "planejamentos-83b23",
+      storageBucket: "planejamentos-83b23.firebasestorage.app",
+      messagingSenderId: "651538842400",
+      appId: "1:651538842400:web:5d0b45e7df8f2ac1f0cd45",
+      measurementId: "G-GK5XJ7FZN1"
+    };
+
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+
+    // Utilitário para pegar o número da semana no ano
+    function getWeekNumber(d) {
+      d = new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()));
+      d.setUTCDate(d.getUTCDate() + 4 - (d.getUTCDay() || 7));
+      var yearStart = new Date(Date.UTC(d.getUTCFullYear(), 0, 1));
+      var weekNo = Math.ceil((((d - yearStart) / 86400000) + 1) / 7);
+      return weekNo;
+    }
+
+    const hoje = new Date();
+    const ano = hoje.getFullYear();
+    const numSemana = getWeekNumber(hoje);
+    const docSemanaId = `${ano}-W${numSemana}`;
+
+    document.getElementById('semana-identificador').innerText = `Semana ${numSemana} • ${ano}`;
+
+    // Cálculo Simplificado da Lua
+    function getPhaseLua() {
+      const fases = ['Lua Nova 🌑', 'Lua Crescente 🌓', 'Lua Cheia 🌕', 'Lua Minguante 🌗'];
+      // Estimativa baseada no dia
+      const day = hoje.getDate();
+      if (day <= 7) return fases[0];
+      if (day <= 15) return fases[1];
+      if (day <= 22) return fases[2];
+      return fases[3];
+    }
+    document.getElementById('lua-fase').innerText = getPhaseLua();
+
+    // Dias da Semana (Segunda a Domingo)
+    const diasInfo = [
+      { id: 'seg', nome: 'SEG', fixo: '' },
+      { id: 'ter', nome: 'TER', fixo: '💃 Zouk (20h30)' },
+      { id: 'qua', nome: 'QUA', fixo: '💃 Bachata (20h30)' },
+      { id: 'qui', nome: 'QUI', fixo: '' },
+      { id: 'sex', nome: 'SEX', fixo: '' },
+      { id: 'sab', nome: 'SÁB', fixo: '' },
+      { id: 'dom', nome: 'DOM', fixo: '📜 Revisão' }
+    ];
+
+    const diaAtualIndex = (hoje.getDay() + 6) % 7; // 0 = Seg, 6 = Dom
+
+    // Renderiza o HTML dos 7 Dias
+    function renderGridSemana() {
+      const container = document.getElementById('container-semana');
+      let html = '';
+
+      diasInfo.forEach((d, idx) => {
+        const isHoje = idx === diaAtualIndex;
+        html += `
+          <div class="col-dia-sem ${isHoje ? 'hoje' : ''}">
+            <div class="dia-sem-header">${d.nome} ${isHoje ? '⭐️' : ''}</div>
+            ${d.fixo ? `<div class="tag-fixa">${d.fixo}</div>` : ''}
+            <textarea id="foco-${d.id}" rows="4" placeholder="Foco / Intenção..."></textarea>
+          </div>
+        `;
+      });
+      container.innerHTML = html;
+    }
+
+    renderGridSemana();
+
+    // Escuta Dados do Firestore
+    db.collection("ritmo_semanal").doc(docSemanaId).onSnapshot(doc => {
+      if (doc.exists) {
+        const data = doc.data();
+        if (data.cargas) {
+          if (data.cargas.casa) document.getElementById('carga-casa').value = data.cargas.casa;
+          if (data.cargas.loja) document.getElementById('carga-loja').value = data.cargas.loja;
+          if (data.cargas.design) document.getElementById('carga-design').value = data.cargas.design;
+          if (data.cargas.estudos) document.getElementById('carga-estudos').value = data.cargas.estudos;
+        }
+        if (data.focos) {
+          diasInfo.forEach(d => {
+            if (data.focos[d.id] !== undefined) {
+              const el = document.getElementById(`foco-${d.id}`);
+              if (el) el.value = data.focos[d.id];
+            }
+          });
+        }
+      }
+    });
+
+    async function salvarSemana() {
+      const focosObj = {};
+      diasInfo.forEach(d => {
+        const el = document.getElementById(`foco-${d.id}`);
+        if (el) focosObj[d.id] = el.value.trim();
+      });
+
+      const cargasObj = {
+        casa: document.getElementById('carga-casa').value,
+        loja: document.getElementById('carga-loja').value,
+        design: document.getElementById('carga-design').value,
+        estudos: document.getElementById('carga-estudos').value
+      };
+
+      await db.collection("ritmo_semanal").doc(docSemanaId).set({
+        semana: numSemana,
+        ano: ano,
+        cargas: cargasObj,
+        focos: focosObj,
+        timestamp: firebase.firestore.FieldValue.serverTimestamp()
+      }, { merge: true });
+
+      alert("✨ Ritmos da Semana Sincronizados em Valfenda!");
+    }
+
+    async function salvarCarga() {
+      // Salva automaticamente ao mudar a opção
+      salvarSemana();
+    }
+  </script>
+</body>
+</html>
