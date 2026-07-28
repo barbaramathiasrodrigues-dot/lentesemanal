@@ -23,6 +23,7 @@
       --texto-dourado: #f0c987;
       --verde-elfico: #81b29a;
       --rosa-danca: #e07a5f;
+      --roxo-terapia: #a855f7;
       --lua-azul: #a8dadc;
       --fonte-titulo: 'Cinzel Decorative', serif;
       --fonte-sub: 'Cinzel', serif;
@@ -41,7 +42,7 @@
 
     .card {
       width: 100%;
-      max-width: 720px;
+      max-width: 760px;
       background: var(--card-bg);
       border: 2px solid var(--borda-dourada);
       border-radius: 12px;
@@ -124,7 +125,7 @@
       gap: 6px;
     }
 
-    @media (max-width: 650px) {
+    @media (max-width: 700px) {
       .grid-semana { grid-template-columns: 1fr; }
     }
 
@@ -148,8 +149,22 @@
       border-bottom: 1px solid rgba(197, 160, 89, 0.2);
       padding-bottom: 4px;
       margin-bottom: 6px;
-      text-align: center;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
       font-size: 0.75rem;
+    }
+
+    .btn-add-fixo {
+      background: transparent;
+      border: none;
+      color: var(--verde-elfico);
+      cursor: pointer;
+      font-size: 0.7rem;
+    }
+
+    .container-fixos {
+      margin-bottom: 6px;
     }
 
     .tag-fixa {
@@ -158,10 +173,27 @@
       color: var(--rosa-danca);
       padding: 2px 4px;
       border-radius: 3px;
-      font-size: 0.68rem;
-      margin-bottom: 4px;
-      text-align: center;
+      font-size: 0.65rem;
+      margin-bottom: 3px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
       font-weight: bold;
+    }
+
+    .tag-fixa.terapia {
+      background: rgba(168, 85, 247, 0.2);
+      border-color: var(--roxo-terapia);
+      color: #c084fc;
+    }
+
+    .btn-del-fixo {
+      background: transparent;
+      border: none;
+      color: #e07a5f;
+      cursor: pointer;
+      font-size: 0.65rem;
+      margin-left: 4px;
     }
 
     textarea {
@@ -264,7 +296,6 @@
     firebase.initializeApp(firebaseConfig);
     const db = firebase.firestore();
 
-    // Utilitário para pegar o número da semana no ano
     function getWeekNumber(d) {
       d = new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()));
       d.setUTCDate(d.getUTCDate() + 4 - (d.getUTCDay() || 7));
@@ -280,10 +311,8 @@
 
     document.getElementById('semana-identificador').innerText = `Semana ${numSemana} • ${ano}`;
 
-    // Cálculo Simplificado da Lua
     function getPhaseLua() {
       const fases = ['Lua Nova 🌑', 'Lua Crescente 🌓', 'Lua Cheia 🌕', 'Lua Minguante 🌗'];
-      // Estimativa baseada no dia
       const day = hoje.getDate();
       if (day <= 7) return fases[0];
       if (day <= 15) return fases[1];
@@ -292,30 +321,57 @@
     }
     document.getElementById('lua-fase').innerText = getPhaseLua();
 
-    // Dias da Semana (Segunda a Domingo)
-    const diasInfo = [
-      { id: 'seg', nome: 'SEG', fixo: '' },
-      { id: 'ter', nome: 'TER', fixo: '💃 Zouk (20h30)' },
-      { id: 'qua', nome: 'QUA', fixo: '💃 Bachata (20h30)' },
-      { id: 'qui', nome: 'QUI', fixo: '' },
-      { id: 'sex', nome: 'SEX', fixo: '' },
-      { id: 'sab', nome: 'SÁB', fixo: '' },
-      { id: 'dom', nome: 'DOM', fixo: '📜 Revisão' }
+    // Padrão Inicial dos Dias com Dança e Terapia
+    const padraoFixos = {
+      seg: [{ id: 1, texto: '🕺 Bachata (20h30)', tipo: 'danca' }],
+      ter: [{ id: 2, texto: '💃 Zouk (20h30)', tipo: 'danca' }],
+      qua: [{ id: 3, texto: '🏥 Terapia (17h)', tipo: 'terapia' }],
+      qui: [],
+      sex: [],
+      sab: [],
+      dom: [{ id: 4, texto: '📜 Revisão', tipo: 'padrao' }]
+    };
+
+    let fixosSemana = JSON.parse(JSON.stringify(padraoFixos));
+
+    const diasList = [
+      { id: 'seg', nome: 'SEG' },
+      { id: 'ter', nome: 'TER' },
+      { id: 'qua', nome: 'QUA' },
+      { id: 'qui', nome: 'QUI' },
+      { id: 'sex', nome: 'SEX' },
+      { id: 'sab', nome: 'SÁB' },
+      { id: 'dom', nome: 'DOM' }
     ];
 
-    const diaAtualIndex = (hoje.getDay() + 6) % 7; // 0 = Seg, 6 = Dom
+    const diaAtualIndex = (hoje.getDay() + 6) % 7;
 
-    // Renderiza o HTML dos 7 Dias
     function renderGridSemana() {
       const container = document.getElementById('container-semana');
       let html = '';
 
-      diasInfo.forEach((d, idx) => {
+      diasList.forEach((d, idx) => {
         const isHoje = idx === diaAtualIndex;
+        const listaFixos = fixosSemana[d.id] || [];
+
+        let htmlFixos = '';
+        listaFixos.forEach(f => {
+          const isTer = f.tipo === 'terapia';
+          htmlFixos += `
+            <div class="tag-fixa ${isTer ? 'terapia' : ''}">
+              <span>${f.texto}</span>
+              <button class="btn-del-fixo" onclick="removerFixo('${d.id}', ${f.id})"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+          `;
+        });
+
         html += `
           <div class="col-dia-sem ${isHoje ? 'hoje' : ''}">
-            <div class="dia-sem-header">${d.nome} ${isHoje ? '⭐️' : ''}</div>
-            ${d.fixo ? `<div class="tag-fixa">${d.fixo}</div>` : ''}
+            <div class="dia-sem-header">
+              <span>${d.nome} ${isHoje ? '⭐️' : ''}</span>
+              <button class="btn-add-fixo" onclick="adicionarFixo('${d.id}')" title="Adicionar evento fixo">+ Fixo</button>
+            </div>
+            <div class="container-fixos" id="fixos-${d.id}">${htmlFixos}</div>
             <textarea id="foco-${d.id}" rows="4" placeholder="Foco / Intenção..."></textarea>
           </div>
         `;
@@ -323,9 +379,27 @@
       container.innerHTML = html;
     }
 
-    renderGridSemana();
+    function removerFixo(diaId, itemFixoid) {
+      fixosSemana[diaId] = fixosSemana[diaId].filter(f => f.id !== itemFixoid);
+      renderGridSemana();
+      salvarSemana();
+    }
 
-    // Escuta Dados do Firestore
+    function adicionarFixo(diaId) {
+      const txt = prompt("Digite o nome/horário do compromisso fixo:");
+      if (txt && txt.trim()) {
+        if (!fixosSemana[diaId]) fixosSemana[diaId] = [];
+        fixosSemana[diaId].push({
+          id: Date.now(),
+          texto: txt.trim(),
+          tipo: txt.toLowerCase().includes('terapia') ? 'terapia' : 'padrao'
+        });
+        renderGridSemana();
+        salvarSemana();
+      }
+    }
+
+    // Escuta Firestore
     db.collection("ritmo_semanal").doc(docSemanaId).onSnapshot(doc => {
       if (doc.exists) {
         const data = doc.data();
@@ -335,20 +409,29 @@
           if (data.cargas.design) document.getElementById('carga-design').value = data.cargas.design;
           if (data.cargas.estudos) document.getElementById('carga-estudos').value = data.cargas.estudos;
         }
+        if (data.fixos) {
+          fixosSemana = data.fixos;
+          renderGridSemana();
+        } else {
+          renderGridSemana();
+        }
+
         if (data.focos) {
-          diasInfo.forEach(d => {
+          diasList.forEach(d => {
             if (data.focos[d.id] !== undefined) {
               const el = document.getElementById(`foco-${d.id}`);
               if (el) el.value = data.focos[d.id];
             }
           });
         }
+      } else {
+        renderGridSemana();
       }
     });
 
     async function salvarSemana() {
       const focosObj = {};
-      diasInfo.forEach(d => {
+      diasList.forEach(d => {
         const el = document.getElementById(`foco-${d.id}`);
         if (el) focosObj[d.id] = el.value.trim();
       });
@@ -364,15 +447,13 @@
         semana: numSemana,
         ano: ano,
         cargas: cargasObj,
+        fixos: fixosSemana,
         focos: focosObj,
         timestamp: firebase.firestore.FieldValue.serverTimestamp()
       }, { merge: true });
-
-      alert("✨ Ritmos da Semana Sincronizados em Valfenda!");
     }
 
     async function salvarCarga() {
-      // Salva automaticamente ao mudar a opção
       salvarSemana();
     }
   </script>
