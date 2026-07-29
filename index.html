@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Os Ritmos de Valfenda - Semanal</title>
+  <title>Lente Semanal - Casa OS</title>
   
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -16,15 +16,15 @@
   <style>
     :root {
       --bg-pergaminho: #0d0a07;
-      --card-bg: rgba(23, 16, 11, 0.92);
+      --card-bg: rgba(23, 16, 11, 0.95);
       --borda-dourada: #c5a059;
       --borda-glow: rgba(197, 160, 89, 0.35);
       --texto-primario: #e8d8c8;
       --texto-dourado: #f0c987;
       --verde-elfico: #81b29a;
+      --vermelho-pausa: #e07a5f;
+      --azul-infra: #a8dadc;
       --rosa-danca: #e07a5f;
-      --roxo-terapia: #a855f7;
-      --lua-azul: #a8dadc;
       --fonte-titulo: 'Cinzel Decorative', serif;
       --fonte-sub: 'Cinzel', serif;
       --fonte-corpo: 'Quicksand', sans-serif;
@@ -40,15 +40,16 @@
       justify-content: center;
     }
 
-    .card {
+    .card-principal {
       width: 100%;
-      max-width: 760px;
+      max-width: 920px;
       background: var(--card-bg);
       border: 2px solid var(--borda-dourada);
       border-radius: 12px;
       padding: 18px;
       box-shadow: 0 0 15px var(--borda-glow);
       backdrop-filter: blur(8px);
+      position: relative;
     }
 
     h2 {
@@ -61,139 +62,196 @@
       padding-bottom: 8px;
     }
 
-    .topo-ritmo {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
-      justify-content: space-between;
-      align-items: center;
+    .topo-info {
       background: rgba(0,0,0,0.4);
       border: 1px solid rgba(197, 160, 89, 0.3);
-      padding: 10px 14px;
+      padding: 8px 12px;
       border-radius: 8px;
-      margin-bottom: 16px;
-    }
-
-    .lua-box {
-      font-family: var(--fonte-sub);
-      color: var(--lua-azul);
-      font-size: 0.82rem;
+      margin-bottom: 8px;
       display: flex;
+      justify-content: space-between;
       align-items: center;
+      font-size: 0.8rem;
+    }
+
+    .painel-meta {
+      background: rgba(197, 160, 89, 0.08);
+      border: 1px dashed rgba(197, 160, 89, 0.3);
+      border-radius: 6px;
+      padding: 6px 10px;
+      margin-bottom: 14px;
+      font-size: 0.72rem;
+      display: flex;
+      justify-content: space-between;
+      color: var(--texto-dourado);
+      flex-wrap: wrap;
       gap: 6px;
     }
 
-    .carga-areas {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 8px;
+    /* ESTEIRA DOS DIAS DA SEMANA */
+    .secao-semana {
+      background: rgba(0,0,0,0.3);
+      border: 1px solid rgba(197, 160, 89, 0.3);
+      border-radius: 8px;
+      padding: 12px;
       margin-bottom: 16px;
     }
 
-    @media (max-width: 500px) {
-      .carga-areas { grid-template-columns: repeat(2, 1fr); }
-    }
-
-    .area-card {
-      background: rgba(0,0,0,0.3);
-      border: 1px solid rgba(197, 160, 89, 0.2);
-      border-radius: 6px;
-      padding: 8px;
-      text-align: center;
-    }
-
-    .area-nome {
+    .secao-semana-titulo {
       font-family: var(--fonte-sub);
-      font-size: 0.72rem;
-      color: var(--texto-dourado);
-      margin-bottom: 4px;
+      color: var(--azul-infra);
+      font-size: 0.82rem;
+      font-weight: bold;
+      margin-bottom: 10px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
     }
 
-    select {
-      background: rgba(0,0,0,0.6);
-      border: 1px solid var(--borda-dourada);
-      color: var(--texto-primario);
-      border-radius: 4px;
-      padding: 4px;
-      font-size: 0.72rem;
-      width: 100%;
+    .esteira-scroll {
+      display: flex;
+      gap: 10px;
+      overflow-x: auto;
+      padding-bottom: 10px;
+      scrollbar-width: thin;
+      scrollbar-color: var(--borda-dourada) transparent;
     }
 
-    .grid-semana {
-      display: grid;
-      grid-template-columns: repeat(7, 1fr);
-      gap: 6px;
-    }
-
-    @media (max-width: 700px) {
-      .grid-semana { grid-template-columns: 1fr; }
-    }
-
-    .col-dia-sem {
-      background: rgba(0,0,0,0.4);
+    .dia-card-semana {
+      min-width: 160px;
+      width: 160px;
+      height: 200px;
+      background: rgba(0,0,0,0.5);
       border: 1px solid rgba(197, 160, 89, 0.25);
-      border-radius: 6px;
+      border-radius: 8px;
       padding: 8px;
-      font-size: 0.78rem;
+      font-size: 0.74rem;
+      flex-shrink: 0;
+      display: flex;
+      flex-direction: column;
+      box-sizing: border-box;
+      transition: border-color 0.15s;
     }
 
-    .col-dia-sem.hoje {
+    .dia-card-semana:hover { border-color: var(--texto-dourado); }
+
+    .dia-card-semana.hoje {
       border: 1px solid var(--texto-dourado);
       background: rgba(197, 160, 89, 0.12);
     }
 
-    .dia-sem-header {
+    .dia-semana-head {
       font-family: var(--fonte-sub);
       font-weight: bold;
       color: var(--texto-dourado);
       border-bottom: 1px solid rgba(197, 160, 89, 0.2);
       padding-bottom: 4px;
-      margin-bottom: 6px;
+      margin-bottom: 4px;
       display: flex;
       justify-content: space-between;
       align-items: center;
-      font-size: 0.75rem;
     }
 
-    .btn-add-fixo {
-      background: transparent;
-      border: none;
-      color: var(--verde-elfico);
+    .btn-add-dia {
+      background: rgba(197, 160, 89, 0.2);
+      border: 1px solid var(--borda-dourada);
+      color: var(--texto-dourado);
+      border-radius: 3px;
       cursor: pointer;
       font-size: 0.7rem;
+      padding: 0 5px;
     }
 
-    .container-fixos {
-      margin-bottom: 6px;
-    }
-
-    .tag-fixa {
-      background: rgba(224, 122, 95, 0.2);
-      border: 1px solid var(--rosa-danca);
-      color: var(--rosa-danca);
-      padding: 2px 4px;
-      border-radius: 3px;
+    .dia-semana-countdown {
       font-size: 0.65rem;
-      margin-bottom: 3px;
+      color: var(--verde-elfico);
+      margin-bottom: 6px;
+      font-weight: bold;
+    }
+
+    .lista-eventos-dia {
+      flex: 1;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      padding-right: 2px;
+      scrollbar-width: thin;
+      scrollbar-color: rgba(197, 160, 89, 0.4) transparent;
+    }
+
+    /* CARD POST-IT NA ESTEIRA */
+    .postit-card {
+      background: rgba(23, 16, 11, 0.9);
+      border-left: 3px solid var(--borda-dourada);
+      border-top: 1px solid rgba(197, 160, 89, 0.2);
+      border-right: 1px solid rgba(197, 160, 89, 0.2);
+      border-bottom: 1px solid rgba(197, 160, 89, 0.2);
+      color: var(--texto-primario);
+      padding: 5px 7px;
+      border-radius: 4px;
+      font-size: 0.68rem;
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      user-select: none;
+    }
+
+    .postit-card:hover { background: rgba(197, 160, 89, 0.15); }
+
+    .postit-card.concluido {
+      opacity: 0.5;
+      text-decoration: line-through;
+    }
+
+    .postit-top {
       display: flex;
       justify-content: space-between;
       align-items: center;
       font-weight: bold;
     }
 
-    .tag-fixa.terapia {
-      background: rgba(168, 85, 247, 0.2);
-      border-color: var(--roxo-terapia);
-      color: #c084fc;
+    .postit-pilar-tag {
+      font-size: 0.58rem;
+      padding: 1px 3px;
+      border-radius: 2px;
+      background: rgba(255,255,255,0.1);
     }
 
-    .btn-del-fixo {
-      background: transparent;
+    .postit-acoes {
+      display: flex;
+      justify-content: flex-end;
+      gap: 6px;
+      margin-top: 2px;
+    }
+
+    .btn-postit-action {
+      background: none;
       border: none;
-      color: #e07a5f;
+      color: var(--texto-dourado);
+      font-size: 0.62rem;
       cursor: pointer;
-      font-size: 0.65rem;
-      margin-left: 4px;
+      padding: 0;
+    }
+
+    /* BLOCOS DA SEMANA */
+    .secao-bloco {
+      background: rgba(0,0,0,0.3);
+      border-left: 3px solid var(--borda-dourada);
+      padding: 10px;
+      border-radius: 0 6px 6px 0;
+      margin-bottom: 12px;
+    }
+
+    .secao-titulo {
+      font-family: var(--fonte-sub);
+      font-size: 0.8rem;
+      font-weight: bold;
+      margin-bottom: 6px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
     }
 
     textarea {
@@ -202,11 +260,21 @@
       border: 1px solid rgba(197, 160, 89, 0.3);
       color: var(--texto-primario);
       border-radius: 4px;
-      padding: 4px;
+      padding: 6px 8px;
       font-family: var(--fonte-corpo);
-      font-size: 0.72rem;
+      font-size: 0.8rem;
       box-sizing: border-box;
       resize: none;
+    }
+
+    .grid-2col {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    @media (max-width: 600px) {
+      .grid-2col { grid-template-columns: 1fr; }
     }
 
     .btn-salvar {
@@ -219,67 +287,335 @@
       padding: 10px;
       border-radius: 6px;
       cursor: pointer;
-      margin-top: 14px;
+      margin-top: 10px;
+    }
+
+    /* MODAL DO CARD COMPLETO (CASCA DO CICLO TÁTICA) */
+    .modal-overlay {
+      display: none;
+      position: absolute;
+      top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(0,0,0,0.88);
+      backdrop-filter: blur(6px);
+      border-radius: 12px;
+      z-index: 100;
+      justify-content: center;
+      align-items: flex-start;
+      padding: 15px 0;
+      overflow-y: auto;
+    }
+
+    .modal-box {
+      background: var(--card-bg);
+      border: 2px solid var(--borda-dourada);
+      border-radius: 8px;
+      padding: 18px;
+      width: 92%;
+      max-width: 520px;
+      box-shadow: 0 0 25px rgba(0,0,0,0.9);
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      box-sizing: border-box;
+      margin-bottom: 20px;
+    }
+
+    .modal-titulo {
+      font-family: var(--fonte-sub);
+      color: var(--texto-dourado);
+      font-size: 0.92rem;
+      font-weight: bold;
+      border-bottom: 1px solid rgba(197, 160, 89, 0.3);
+      padding-bottom: 6px;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .form-group label {
+      font-size: 0.72rem;
+      color: var(--texto-dourado);
+      font-family: var(--fonte-sub);
+      font-weight: bold;
+    }
+
+    input[type="text"], input[type="date"], select, textarea {
+      background: rgba(0,0,0,0.6);
+      border: 1px solid var(--borda-dourada);
+      color: var(--texto-primario);
+      padding: 6px 8px;
+      border-radius: 4px;
+      font-family: var(--fonte-corpo);
+      font-size: 0.8rem;
+      box-sizing: border-box;
+    }
+
+    .grid-form-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+
+    .secao-card-bloco {
+      background: rgba(0,0,0,0.3);
+      border: 1px solid rgba(197, 160, 89, 0.2);
+      border-radius: 6px;
+      padding: 8px 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .subtitulo-card {
+      font-family: var(--fonte-sub);
+      font-size: 0.75rem;
+      color: var(--verde-elfico);
+      font-weight: bold;
+      border-bottom: 1px solid rgba(197, 160, 89, 0.15);
+      padding-bottom: 3px;
+    }
+
+    .bar-acoes-copia {
+      display: flex;
+      gap: 6px;
+      background: rgba(197, 160, 89, 0.1);
+      padding: 6px;
+      border-radius: 4px;
+      border: 1px dashed rgba(197, 160, 89, 0.3);
+      flex-wrap: wrap;
+    }
+
+    .modal-botoes {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 8px;
+      border-top: 1px solid rgba(197, 160, 89, 0.2);
+      padding-top: 10px;
+    }
+
+    .btn-modal {
+      background: rgba(0,0,0,0.4);
+      border: 1px solid var(--borda-dourada);
+      color: var(--texto-primario);
+      padding: 6px 10px;
+      border-radius: 4px;
+      font-size: 0.72rem;
+      cursor: pointer;
+      font-family: var(--fonte-sub);
+    }
+
+    .btn-modal-salvar {
+      background: linear-gradient(135deg, #c5a059, #81b29a);
+      color: #0d0a07;
+      font-weight: bold;
+      border: none;
+    }
+
+    .btn-modal-del {
+      background: transparent;
+      border: 1px solid #e07a5f;
+      color: #e07a5f;
     }
   </style>
 </head>
 <body>
 
-  <div class="card">
-    <h2>🔮 Os Ritmos de Valfenda — Semanal</h2>
+  <div class="card-principal">
+    <h2>🗓️ Lente Semanal & Esteira Tática</h2>
 
-    <!-- TOPO: LUNAR & NÚMERO DA SEMANA -->
-    <div class="topo-ritmo">
-      <div class="lua-box">
-        <i class="fa-solid fa-moon"></i> <span id="lua-fase">Carregando fase da Lua...</span>
+    <div class="topo-info">
+      <div><i class="fa-solid fa-calendar-week"></i> <strong id="semana-label">Semana Vigente</strong></div>
+      <div style="color: var(--verde-elfico);" id="status-semana">Ritmo Semanal Ativo</div>
+    </div>
+
+    <div class="painel-meta">
+      <span>📅 Data Base: <strong id="data-referencia">--/--/----</strong></span>
+      <span>⏱️ Sincronizado (Rio de Janeiro): <strong id="hora-rio">--:--:--</strong></span>
+    </div>
+
+    <!-- ESTEIRA DA SEMANA VIGENTE -->
+    <div class="secao-semana">
+      <div class="secao-semana-titulo">
+        <span><i class="fa-solid fa-timeline"></i> ESTEIRA DA SEMANA (2 cliques no card para abrir a casca)</span>
       </div>
-      <div style="font-family: var(--fonte-sub); font-size:0.78rem; color: var(--texto-dourado);" id="semana-identificador">
-        Semana Ativa
+      <div class="esteira-scroll" id="container-esteira-semana">
+        <!-- Renderizado dinamicamente via JS -->
       </div>
     </div>
 
-    <!-- BALANCEADOR DE CARGA POR ÁREA -->
-    <div class="carga-areas">
-      <div class="area-card">
-        <div class="area-nome">🏠 Casa / Pets</div>
-        <select id="carga-casa" onchange="salvarCarga()">
-          <option value="Leve 🟢">Leve 🟢</option>
-          <option value="Média 🟡">Média 🟡</option>
-          <option value="Intensa 🔴">Intensa 🔴</option>
-        </select>
+    <!-- 🎯 COMPROMISSOS & METAS DA SEMANA -->
+    <div class="secao-bloco" style="border-left-color: var(--verde-elfico);">
+      <div class="secao-titulo" style="color: var(--verde-elfico);">
+        <span><i class="fa-solid fa-bullseye"></i> 🎯 Focos & Entregas da Semana</span>
       </div>
-      <div class="area-card">
-        <div class="area-nome">🏪 Loja Auto</div>
-        <select id="carga-loja" onchange="salvarCarga()">
-          <option value="Leve 🟢">Leve 🟢</option>
-          <option value="Média 🟡" selected>Média 🟡</option>
-          <option value="Intensa 🔴">Intensa 🔴</option>
-        </select>
+      <textarea id="focos-semana" rows="3" placeholder="1. Simulados / Listas ENEM&#10;2. Organização da Casa&#10;3. Aulas de Dança..."></textarea>
+    </div>
+
+    <div class="grid-2col">
+      <!-- 🛡️ MANUTENÇÃO & CUIDADOS -->
+      <div class="secao-bloco" style="border-left-color: var(--azul-infra);">
+        <div class="secao-titulo" style="color: var(--azul-infra);">
+          <span><i class="fa-solid fa-shield-halved"></i> 🛡️ Manutenção & Suporte</span>
+        </div>
+        <textarea id="manutencao-semana" rows="4" placeholder="Pets, compras de insumos, saúde, exames..."></textarea>
       </div>
-      <div class="area-card">
-        <div class="area-nome">🎨 Design Studio</div>
-        <select id="carga-design" onchange="salvarCarga()">
-          <option value="Pausa ⏸️">Pausa ⏸️</option>
-          <option value="Foco 🎯">Foco 🎯</option>
-          <option value="Manutenção 🛠️" selected>Manutenção 🛠️</option>
-        </select>
-      </div>
-      <div class="area-card">
-        <div class="area-nome">🧠 Estudos / Saúde</div>
-        <select id="carga-estudos" onchange="salvarCarga()">
-          <option value="Leve 🟢">Leve 🟢</option>
-          <option value="Avanço 🚀" selected>Avanço 🚀</option>
-          <option value="Provas 📚">Provas 📚</option>
-        </select>
+
+      <!-- 📝 NOTAS DE CAMPO & REGISTROS -->
+      <div class="secao-bloco" style="border-left-color: var(--texto-dourado);">
+        <div class="secao-titulo" style="color: var(--texto-dourado);">
+          <span><i class="fa-solid fa-note-sticky"></i> 📝 Notas & Ajustes do Ritmo</span>
+        </div>
+        <textarea id="notas-semana" rows="4" placeholder="Observações de energia, aprendizados ou transições..."></textarea>
       </div>
     </div>
 
-    <!-- GRID DA SEMANA (SEG A DOM) -->
-    <div class="grid-semana" id="container-semana">
-      <!-- Gerado dinamicamente via JS -->
+    <button class="btn-salvar" onclick="salvarSemanal()">🌿 Sincronizar Lente Semanal</button>
+
+    <!-- MODAL DO CARD COMPLETO (CASCA DO CICLO TÁTICA) -->
+    <div class="modal-overlay" id="modal-card">
+      <div class="modal-box">
+        <div class="modal-titulo" id="modal-card-titulo">🎴 CARD DO EVENTO / COMPROMISSO</div>
+
+        <!-- AÇÕES RÁPIDAS DE DUPLICAÇÃO E CÓPIA -->
+        <div class="bar-acoes-copia" id="box-acoes-duplicar" style="display:none;">
+          <button class="btn-modal" onclick="duplicarCardMesmoDia()">📋 Duplicar Neste Dia</button>
+          <button class="btn-modal" onclick="copiarParaOutraData()">👯 Copiar p/ Outra Data</button>
+        </div>
+
+        <!-- IDENTIFICAÇÃO E DATA -->
+        <div class="form-group">
+          <label>🎯 Título / Nome do Evento / Missão</label>
+          <input type="text" id="card-titulo-input" placeholder="Ex: Aniversário da Mãe, Exame de Sangue, Projeto..." />
+        </div>
+
+        <div class="grid-form-2">
+          <div class="form-group">
+            <label>📅 Data Específica</label>
+            <input type="date" id="card-data-input" />
+          </div>
+          <div class="form-group">
+            <label>Pilar / Categoria</label>
+            <select id="card-pilar-input">
+              <option value="pessoal">👤 Pessoal / Aniversários</option>
+              <option value="casa">🏠 Casa & Pets</option>
+              <option value="loja">🏪 Loja & Auto</option>
+              <option value="estudos">📚 Estudos & ENEM</option>
+              <option value="danca">💃 Dança / Saúde</option>
+              <option value="infra">🛠️ Manutenção / Infra</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="grid-form-2">
+          <div class="form-group">
+            <label>Frequência / Recorrência</label>
+            <select id="card-freq-input">
+              <option value="Único">Único 📌</option>
+              <option value="Semanal">Semanal 🔄</option>
+              <option value="Quinzenal">Quinzenal 🔄</option>
+              <option value="Mensal">Mensal 📅</option>
+              <option value="Anual">Anual 🎂</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Período / Bloco</label>
+            <select id="card-periodo-input">
+              <option value="Dia Todo">Dia Todo ☀️</option>
+              <option value="Manhã">Manhã 🌅</option>
+              <option value="Tarde">Tarde ☀️</option>
+              <option value="Noite">Noite 🌙</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- 🔄 CASCA DO CICLO (AS 3 FASES) -->
+        <div class="secao-card-bloco">
+          <div class="subtitulo-card">🔄 CASCA DO CICLO (As 3 Fases)</div>
+          
+          <div class="form-group">
+            <label>🌅 1. Antes (Preparação & Alinhamento)</label>
+            <textarea id="card-fase-antes" rows="2" placeholder="Ações preparatórias, ambiente, energia necessária..."></textarea>
+          </div>
+
+          <div class="form-group">
+            <label>🌸 2. Vivência (Execução Regulada & Tração)</label>
+            <textarea id="card-fase-vivencia" rows="2" placeholder="Foco de execução, ritmo, blocos e condução..."></textarea>
+          </div>
+
+          <div class="form-group">
+            <label>🌙 3. Integração (Recolhimento & Fechamento)</label>
+            <textarea id="card-fase-integracao" rows="2" placeholder="Descompressão, registro, organização final..."></textarea>
+          </div>
+        </div>
+
+        <!-- 📜 HISTÓRICO & ESTADO -->
+        <div class="secao-card-bloco">
+          <div class="subtitulo-card">📜 Histórico & Estado do Dia</div>
+          
+          <div class="grid-form-2">
+            <div class="form-group">
+              <label>📜 Histórico</label>
+              <input type="text" id="card-historico" placeholder="O que já foi feito / registros" />
+            </div>
+            <div class="form-group">
+              <label>📍 Agora</label>
+              <input type="text" id="card-agora" placeholder="Estado / tarefa ativa" />
+            </div>
+          </div>
+        </div>
+
+        <!-- 🛡️ PROTEÇÕES & BALIZAS -->
+        <div class="secao-card-bloco">
+          <div class="subtitulo-card" style="color: var(--rosa-danca);">🛡️ Proteções & Balizas</div>
+          
+          <div class="grid-form-2">
+            <div class="form-group">
+              <label>Proteções de Hoje</label>
+              <input type="text" id="card-protecoes" placeholder="Limites de energia / estímulos" />
+            </div>
+            <div class="form-group">
+              <label>🚪 Próxima Transição Provável</label>
+              <input type="text" id="card-transicao" placeholder="Próxima mudança de contexto" />
+            </div>
+          </div>
+
+          <div class="grid-form-2">
+            <div class="form-group">
+              <label>⏱️ Linha de Saída</label>
+              <input type="text" id="card-linha-saida" placeholder="Horário limite max" />
+            </div>
+            <div class="form-group">
+              <label>🚨 ALARME (Saída)</label>
+              <input type="text" id="card-alarme" placeholder="Ex: 17:30 - Hora da saída" />
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label>Demandas Essenciais</label>
+            <textarea id="card-demandas" rows="2" placeholder="O que precisa ser feito sem falta..."></textarea>
+          </div>
+        </div>
+
+        <!-- 🎒 CHECKLIST DE SAÍDA -->
+        <div class="secao-card-bloco">
+          <div class="subtitulo-card" style="color: var(--azul-infra);">🎒 Checklist de Saída & Proteção Sensorial</div>
+          <textarea id="card-checklist" rows="3" placeholder="- [ ] Óculos de proteção / fones&#10;- [ ] Checar chaves e carteira&#10;- [ ] Pausa de 1 min antes da porta..."></textarea>
+        </div>
+
+        <div class="modal-botoes">
+          <button class="btn-modal btn-modal-del" id="btn-excluir-card" onclick="excluirCardAtual()">🗑️ Excluir Card</button>
+          <div style="display:flex; gap:6px;">
+            <button class="btn-modal" onclick="fecharModalCard()">Cancelar</button>
+            <button class="btn-modal btn-modal-salvar" onclick="salvarCardAtual()">💾 Salvar Card Completo</button>
+          </div>
+        </div>
+      </div>
     </div>
 
-    <button class="btn-salvar" onclick="salvarSemana()">🌿 Sincronizar Ritmo Semanal</button>
   </div>
 
   <script>
@@ -296,165 +632,271 @@
     firebase.initializeApp(firebaseConfig);
     const db = firebase.firestore();
 
-    function getWeekNumber(d) {
-      d = new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()));
-      d.setUTCDate(d.getUTCDate() + 4 - (d.getUTCDay() || 7));
-      var yearStart = new Date(Date.UTC(d.getUTCFullYear(), 0, 1));
-      var weekNo = Math.ceil((((d - yearStart) / 86400000) + 1) / 7);
-      return weekNo;
+    const hojeDataObj = new Date();
+    const docIdHojeKey = formatDateKey(hojeDataObj);
+    document.getElementById('data-referencia').innerText = hojeDataObj.toLocaleDateString('pt-BR');
+
+    // CÁLCULO DA SEMANA SEGUNDA A DOMINGO
+    const diaSemanaIndex = hojeDataObj.getDay(); // 0 = Dom, 1 = Seg...
+    const diffSegunda = hojeDataObj.getDate() - diaSemanaIndex + (diaSemanaIndex === 0 ? -6 : 1);
+    const segundaObj = new Date(hojeDataObj.setDate(diffSegunda));
+    
+    // Restaura a data de hoje para os cálculos
+    const hojeRealObj = new Date();
+
+    const segundaStr = segundaObj.toLocaleDateString('pt-BR');
+    const domingoObj = new Date(segundaObj);
+    domingoObj.setDate(domingoObj.getDate() + 6);
+    const domingoStr = domingoObj.toLocaleDateString('pt-BR');
+
+    const docSemanaId = `SEMANA-${formatDateKey(segundaObj)}`;
+    document.getElementById('semana-label').innerText = `Semana de ${segundaStr} a ${domingoStr}`;
+
+    function formatDateKey(d) {
+      const dia = d.getDate().toString().padStart(2, '0');
+      const mes = (d.getMonth() + 1).toString().padStart(2, '0');
+      return `${d.getFullYear()}-${mes}-${dia}`;
     }
 
-    const hoje = new Date();
-    const ano = hoje.getFullYear();
-    const numSemana = getWeekNumber(hoje);
-    const docSemanaId = `${ano}-W${numSemana}`;
-
-    document.getElementById('semana-identificador').innerText = `Semana ${numSemana} • ${ano}`;
-
-    function getPhaseLua() {
-      const fases = ['Lua Nova 🌑', 'Lua Crescente 🌓', 'Lua Cheia 🌕', 'Lua Minguante 🌗'];
-      const day = hoje.getDate();
-      if (day <= 7) return fases[0];
-      if (day <= 15) return fases[1];
-      if (day <= 22) return fases[2];
-      return fases[3];
+    function getHoraRioStr(dateObj) {
+      const d = dateObj || new Date();
+      return d.toLocaleTimeString('pt-BR', { timeZone: 'America/Sao_Paulo' }) + ' (' + d.toLocaleDateString('pt-BR') + ')';
     }
-    document.getElementById('lua-fase').innerText = getPhaseLua();
 
-    // Padrão Inicial dos Dias com Dança e Terapia
-    const padraoFixos = {
-      seg: [{ id: 1, texto: '🕺 Bachata (20h30)', tipo: 'danca' }],
-      ter: [{ id: 2, texto: '💃 Zouk (20h30)', tipo: 'danca' }],
-      qua: [{ id: 3, texto: '🏥 Terapia (17h)', tipo: 'terapia' }],
-      qui: [],
-      sex: [],
-      sab: [],
-      dom: [{ id: 4, texto: '📜 Revisão', tipo: 'padrao' }]
-    };
+    let cardsUniversais = []; 
+    let cardEmEdicao = null;
 
-    let fixosSemana = JSON.parse(JSON.stringify(padraoFixos));
+    // 1. ESCUTA O RITMO SEMANAL
+    db.collection("ritmo_semanal").doc(docSemanaId).onSnapshot(doc => {
+      if (doc.exists) {
+        const d = doc.data();
+        if (d.focos) document.getElementById('focos-semana').value = d.focos;
+        if (d.manutencao) document.getElementById('manutencao-semana').value = d.manutencao;
+        if (d.notas) document.getElementById('notas-semana').value = d.notas;
+        if (d.atualizadoEmTexto) document.getElementById('hora-rio').innerText = d.atualizadoEmTexto;
+        else document.getElementById('hora-rio').innerText = getHoraRioStr();
+      } else {
+        document.getElementById('hora-rio').innerText = getHoraRioStr();
+      }
+    });
 
-    const diasList = [
-      { id: 'seg', nome: 'SEG' },
-      { id: 'ter', nome: 'TER' },
-      { id: 'qua', nome: 'QUA' },
-      { id: 'qui', nome: 'QUI' },
-      { id: 'sex', nome: 'SEX' },
-      { id: 'sab', nome: 'SÁB' },
-      { id: 'dom', nome: 'DOM' }
-    ];
+    // 2. ESCUTA A COLEÇÃO CENTRAL DE CARDS UNIVERSAIS
+    db.collection("agenda_cards").onSnapshot(snapshot => {
+      cardsUniversais = [];
+      snapshot.forEach(doc => {
+        cardsUniversais.push({ id: doc.id, ...doc.data() });
+      });
+      renderizarEsteiraSemana();
+    });
 
-    const diaAtualIndex = (hoje.getDay() + 6) % 7;
-
-    function renderGridSemana() {
-      const container = document.getElementById('container-semana');
+    // RENDERIZA A ESTEIRA DOS DIAS DA SEMANA VIGENTE
+    function renderizarEsteiraSemana() {
+      const container = document.getElementById('container-esteira-semana');
       let html = '';
 
-      diasList.forEach((d, idx) => {
-        const isHoje = idx === diaAtualIndex;
-        const listaFixos = fixosSemana[d.id] || [];
+      for (let i = 0; i < 7; i++) {
+        const d = new Date(segundaObj);
+        d.setDate(segundaObj.getDate() + i);
+        const dataKey = formatDateKey(d);
+        const diaSemanaStr = d.toLocaleDateString('pt-BR', { weekday: 'short' }).toUpperCase();
+        const diaNum = d.getDate().toString().padStart(2, '0');
+        const mesNum = (d.getMonth() + 1).toString().padStart(2, '0');
 
-        let htmlFixos = '';
-        listaFixos.forEach(f => {
-          const isTer = f.tipo === 'terapia';
-          htmlFixos += `
-            <div class="tag-fixa ${isTer ? 'terapia' : ''}">
-              <span>${f.texto}</span>
-              <button class="btn-del-fixo" onclick="removerFixo('${d.id}', ${f.id})"><i class="fa-solid fa-xmark"></i></button>
+        const diffTempo = Math.ceil((d - new Date(hojeRealObj.getFullYear(), hojeRealObj.getMonth(), hojeRealObj.getDate())) / (1000 * 60 * 60 * 24));
+        let countdown = diffTempo === 0 ? "HOJE ⭐️" : (diffTempo === 1 ? "AMANHÃ ⏳" : (diffTempo < 0 ? `${Math.abs(diffTempo)}d atrás` : `Em ${diffTempo} dias`));
+
+        const cardsDoDia = cardsUniversais.filter(c => c.data === dataKey);
+        let htmlCards = '';
+
+        cardsDoDia.forEach(card => {
+          let pilarCor = 'var(--borda-dourada)';
+          if (card.pilar === 'casa') pilarCor = 'var(--verde-elfico)';
+          if (card.pilar === 'danca') pilarCor = 'var(--rosa-danca)';
+          if (card.pilar === 'infra') pilarCor = 'var(--azul-infra)';
+
+          htmlCards += `
+            <div class="postit-card ${card.concluido ? 'concluido' : ''}" style="border-left-color:${pilarCor};" ondblclick="event.stopPropagation(); abrirModalCard('${card.id}')">
+              <div class="postit-top">
+                <span>${card.titulo}</span>
+                <span class="postit-pilar-tag">${card.pilar || 'geral'}</span>
+              </div>
+              ${card.agora ? `<div style="font-size:0.62rem; color:var(--texto-dourado);">📍 ${card.agora}</div>` : ''}
+              <div class="postit-acoes">
+                <button class="btn-postit-action" onclick="event.stopPropagation(); alternarConcluidoCard('${card.id}')" title="Concluir">✓</button>
+                <button class="btn-postit-action" onclick="event.stopPropagation(); moverParaHoje('${card.id}')" title="Mover para Hoje">⬆️ Hoje</button>
+              </div>
             </div>
           `;
         });
 
         html += `
-          <div class="col-dia-sem ${isHoje ? 'hoje' : ''}">
-            <div class="dia-sem-header">
-              <span>${d.nome} ${isHoje ? '⭐️' : ''}</span>
-              <button class="btn-add-fixo" onclick="adicionarFixo('${d.id}')" title="Adicionar evento fixo">+ Fixo</button>
+          <div class="dia-card-semana ${diffTempo === 0 ? 'hoje' : ''}" ondblclick="abrirModalNovoCard('${dataKey}')">
+            <div class="dia-semana-head">
+              <span>${diaNum}/${mesNum} (${diaSemanaStr})</span>
+              <button class="btn-add-dia" onclick="event.stopPropagation(); abrirModalNovoCard('${dataKey}')">+</button>
             </div>
-            <div class="container-fixos" id="fixos-${d.id}">${htmlFixos}</div>
-            <textarea id="foco-${d.id}" rows="4" placeholder="Foco / Intenção..."></textarea>
+            <div class="dia-semana-countdown">${countdown}</div>
+            <div class="lista-eventos-dia">
+              ${htmlCards}
+            </div>
           </div>
         `;
-      });
+      }
       container.innerHTML = html;
     }
 
-    function removerFixo(diaId, itemFixoid) {
-      fixosSemana[diaId] = fixosSemana[diaId].filter(f => f.id !== itemFixoid);
-      renderGridSemana();
-      salvarSemana();
+    // MODAL DE CARDS COM A CASCA COMPLETA
+    function abrirModalNovoCard(dataKey) {
+      cardEmEdicao = null;
+      document.getElementById('modal-card-titulo').innerText = '🎴 NOVO CARD DO EVENTO';
+      document.getElementById('box-acoes-duplicar').style.display = 'none';
+
+      document.getElementById('card-titulo-input').value = '';
+      document.getElementById('card-data-input').value = dataKey;
+      document.getElementById('card-pilar-input').value = 'pessoal';
+      document.getElementById('card-freq-input').value = 'Único';
+      document.getElementById('card-periodo-input').value = 'Dia Todo';
+      
+      document.getElementById('card-fase-antes').value = '';
+      document.getElementById('card-fase-vivencia').value = '';
+      document.getElementById('card-fase-integracao').value = '';
+      document.getElementById('card-historico').value = '';
+      document.getElementById('card-agora').value = '';
+      document.getElementById('card-protecoes').value = '';
+      document.getElementById('card-transicao').value = '';
+      document.getElementById('card-linha-saida').value = '';
+      document.getElementById('card-alarme').value = '';
+      document.getElementById('card-demandas').value = '';
+      document.getElementById('card-checklist').value = '';
+
+      document.getElementById('btn-excluir-card').style.display = 'none';
+      document.getElementById('modal-card').style.display = 'flex';
     }
 
-    function adicionarFixo(diaId) {
-      const txt = prompt("Digite o nome/horário do compromisso fixo:");
-      if (txt && txt.trim()) {
-        if (!fixosSemana[diaId]) fixosSemana[diaId] = [];
-        fixosSemana[diaId].push({
-          id: Date.now(),
-          texto: txt.trim(),
-          tipo: txt.toLowerCase().includes('terapia') ? 'terapia' : 'padrao'
-        });
-        renderGridSemana();
-        salvarSemana();
-      }
+    function abrirModalCard(cardId) {
+      const card = cardsUniversais.find(c => c.id === cardId);
+      if (!card) return;
+      cardEmEdicao = card;
+      document.getElementById('modal-card-titulo').innerText = '✏️ EDITAR CARD DO EVENTO';
+      document.getElementById('box-acoes-duplicar').style.display = 'flex';
+
+      document.getElementById('card-titulo-input').value = card.titulo || '';
+      document.getElementById('card-data-input').value = card.data || docIdHojeKey;
+      document.getElementById('card-pilar-input').value = card.pilar || 'pessoal';
+      document.getElementById('card-freq-input').value = card.frequencia || 'Único';
+      document.getElementById('card-periodo-input').value = card.periodo || 'Dia Todo';
+
+      document.getElementById('card-fase-antes').value = card.faseAntes || '';
+      document.getElementById('card-fase-vivencia').value = card.faseVivencia || '';
+      document.getElementById('card-fase-integracao').value = card.faseIntegracao || '';
+      document.getElementById('card-historico').value = card.historico || '';
+      document.getElementById('card-agora').value = card.agora || '';
+      document.getElementById('card-protecoes').value = card.protecoes || '';
+      document.getElementById('card-transicao').value = card.transicao || '';
+      document.getElementById('card-linha-saida').value = card.linhaSaida || '';
+      document.getElementById('card-alarme').value = card.alarme || '';
+      document.getElementById('card-demandas').value = card.demandas || '';
+      document.getElementById('card-checklist').value = card.checklist || '';
+
+      document.getElementById('btn-excluir-card').style.display = 'block';
+      document.getElementById('modal-card').style.display = 'flex';
     }
 
-    // Escuta Firestore
-    db.collection("ritmo_semanal").doc(docSemanaId).onSnapshot(doc => {
-      if (doc.exists) {
-        const data = doc.data();
-        if (data.cargas) {
-          if (data.cargas.casa) document.getElementById('carga-casa').value = data.cargas.casa;
-          if (data.cargas.loja) document.getElementById('carga-loja').value = data.cargas.loja;
-          if (data.cargas.design) document.getElementById('carga-design').value = data.cargas.design;
-          if (data.cargas.estudos) document.getElementById('carga-estudos').value = data.cargas.estudos;
-        }
-        if (data.fixos) {
-          fixosSemana = data.fixos;
-          renderGridSemana();
-        } else {
-          renderGridSemana();
-        }
+    function fecharModalCard() {
+      document.getElementById('modal-card').style.display = 'none';
+      cardEmEdicao = null;
+    }
 
-        if (data.focos) {
-          diasList.forEach(d => {
-            if (data.focos[d.id] !== undefined) {
-              const el = document.getElementById(`foco-${d.id}`);
-              if (el) el.value = data.focos[d.id];
-            }
-          });
-        }
-      } else {
-        renderGridSemana();
-      }
-    });
-
-    async function salvarSemana() {
-      const focosObj = {};
-      diasList.forEach(d => {
-        const el = document.getElementById(`foco-${d.id}`);
-        if (el) focosObj[d.id] = el.value.trim();
-      });
-
-      const cargasObj = {
-        casa: document.getElementById('carga-casa').value,
-        loja: document.getElementById('carga-loja').value,
-        design: document.getElementById('carga-design').value,
-        estudos: document.getElementById('carga-estudos').value
+    function extrairObjetoFormulario() {
+      return {
+        titulo: document.getElementById('card-titulo-input').value.trim(),
+        data: document.getElementById('card-data-input').value,
+        pilar: document.getElementById('card-pilar-input').value,
+        frequencia: document.getElementById('card-freq-input').value,
+        periodo: document.getElementById('card-periodo-input').value,
+        faseAntes: document.getElementById('card-fase-antes').value.trim(),
+        faseVivencia: document.getElementById('card-fase-vivencia').value.trim(),
+        faseIntegracao: document.getElementById('card-fase-integracao').value.trim(),
+        historico: document.getElementById('card-historico').value.trim(),
+        agora: document.getElementById('card-agora').value.trim(),
+        protecoes: document.getElementById('card-protecoes').value.trim(),
+        transicao: document.getElementById('card-transicao').value.trim(),
+        linhaSaida: document.getElementById('card-linha-saida').value.trim(),
+        alarme: document.getElementById('card-alarme').value.trim(),
+        demandas: document.getElementById('card-demandas').value.trim(),
+        checklist: document.getElementById('card-checklist').value.trim(),
+        concluido: cardEmEdicao ? (cardEmEdicao.concluido || false) : false,
+        atualizadoEm: firebase.firestore.FieldValue.serverTimestamp()
       };
+    }
 
-      await db.collection("ritmo_semanal").doc(docSemanaId).set({
-        semana: numSemana,
-        ano: ano,
-        cargas: cargasObj,
-        fixos: fixosSemana,
-        focos: focosObj,
-        timestamp: firebase.firestore.FieldValue.serverTimestamp()
+    async function salvarCardAtual() {
+      const cardObj = extrairObjetoFormulario();
+      if (!cardObj.titulo || !cardObj.data) return alert("Título e Data são obrigatórios.");
+
+      if (cardEmEdicao) {
+        await db.collection("agenda_cards").doc(cardEmEdicao.id).set(cardObj, { merge: true });
+      } else {
+        await db.collection("agenda_cards").add(cardObj);
+      }
+
+      fecharModalCard();
+    }
+
+    async function duplicarCardMesmoDia() {
+      const cardObj = extrairObjetoFormulario();
+      cardObj.titulo = `${cardObj.titulo} (Cópia)`;
+      delete cardObj.id;
+      await db.collection("agenda_cards").add(cardObj);
+      fecharModalCard();
+    }
+
+    async function copiarParaOutraData() {
+      const novaData = prompt("Digite a nova data para copiar o Card (YYYY-MM-DD):", document.getElementById('card-data-input').value);
+      if (!novaData) return;
+
+      const cardObj = extrairObjetoFormulario();
+      cardObj.data = novaData;
+      delete cardObj.id;
+
+      await db.collection("agenda_cards").add(cardObj);
+      fecharModalCard();
+    }
+
+    async function excluirCardAtual() {
+      if (cardEmEdicao) {
+        await db.collection("agenda_cards").doc(cardEmEdicao.id).delete();
+        fecharModalCard();
+      }
+    }
+
+    async function alternarConcluidoCard(cardId) {
+      const card = cardsUniversais.find(c => c.id === cardId);
+      if (card) {
+        await db.collection("agenda_cards").doc(cardId).set({
+          concluido: !card.concluido
+        }, { merge: true });
+      }
+    }
+
+    async function moverParaHoje(cardId) {
+      await db.collection("agenda_cards").doc(cardId).set({
+        data: docIdHojeKey
       }, { merge: true });
     }
 
-    async function salvarCarga() {
-      salvarSemana();
+    async function salvarSemanal() {
+      const horaStr = getHoraRioStr();
+      document.getElementById('hora-rio').innerText = horaStr;
+
+      await db.collection("ritmo_semanal").doc(docSemanaId).set({
+        semana: docSemanaId,
+        focos: document.getElementById('focos-semana').value.trim(),
+        manutencao: document.getElementById('manutencao-semana').value.trim(),
+        notas: document.getElementById('notas-semana').value.trim(),
+        atualizadoEmTexto: horaStr,
+        timestamp: firebase.firestore.FieldValue.serverTimestamp()
+      }, { merge: true });
     }
   </script>
 </body>
